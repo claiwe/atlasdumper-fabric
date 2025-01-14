@@ -11,12 +11,19 @@ public class VersionConstants {
     public static int MAJOR, MINOR, PATCH;
     public static int YEAR = -1, WEEK = -1;
     public static boolean RC;
+    public static boolean NO_SEMVER;
 
     public static void init() {
         MinecraftGameProvider mc = (MinecraftGameProvider)
                 FabricLoaderImpl.INSTANCE.getGameProvider();
         ModContainer mcMod = FabricLoader.getInstance().getModContainer("minecraft")
                 .orElseThrow(() -> new RuntimeException("no minecraft mod container"));
+
+        if (!(mcMod.getMetadata().getVersion() instanceof SemanticVersion)) {
+            NO_SEMVER = true;
+            AtlasDumper.LOGGER.warn("minecraft version has no semantic version");
+            return;
+        }
 
         SemanticVersion version = (SemanticVersion) mcMod.getMetadata().getVersion();
         MAJOR = version.getVersionComponent(0);

@@ -24,6 +24,11 @@ public class MixinPlugin implements IMixinConfigPlugin {
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         AtlasDumper.LOGGER.info("Checking {}", mixinClassName);
 
+        if (VersionConstants.NO_SEMVER) {
+            // fallback to latest mixin for when there's no semantic version to use
+            return mixinClassName.contains("compat.post1192");
+        }
+
         // 19w34a-19w46b
         boolean isSnapshot = VersionConstants.YEAR == 19 &&
                 (VersionConstants.WEEK >= 34 && VersionConstants.WEEK <= 46);
